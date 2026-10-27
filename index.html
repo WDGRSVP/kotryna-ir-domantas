@@ -247,6 +247,7 @@
       notFoundText: 'Atidarykite asmeninę nuorodą, kurią gavote. Jei ji neveikia, susisiekite su mumis.',
       loadError: 'Nepavyko įkelti kvietimo. Perkraukite puslapį.',
       notConfigured: 'Svetainė dar neprijungta (config.js).',
+      outdated: 'Google scenarijus pasenęs: Apps Script įklijuokite naują Code.gs ir paskelbkite naują versiją (Deploy → Manage deployments → New version).',
       scroll: 'Slinkite žemyn',
       dear: n => 'Sveiki, ' + n + '!',
       and: 'ir',
@@ -310,6 +311,7 @@
       notFoundText: "Please open the personal link you received. If it doesn't work, get in touch with us.",
       loadError: 'Could not load your invitation. Please refresh the page.',
       notConfigured: 'This site is not connected yet (config.js).',
+      outdated: 'The Google script is out of date: paste the new Code.gs into Apps Script and deploy a new version (Deploy → Manage deployments → New version).',
       scroll: 'Scroll',
       dear: n => 'Dear ' + n + ',',
       and: '&',
@@ -851,11 +853,8 @@
       const res = await fetch(API + '?action=invite&i=' + encodeURIComponent(TOKEN));
       const data = await res.json();
       if (!data.config) throw new Error('generic');
+      if (!(data.config.apiVersion >= 3)) { $('loading').textContent = t('outdated'); return; }
       S.cfg = data.config;
-      if (!stored) {
-        const l = (data.invite && data.invite.lang) || S.cfg.defaultLanguage;
-        if (l === 'lt' || l === 'en') S.lang = l;
-      }
       buildBackgrounds();
       $('loading').classList.add('hidden');
       $('scrollCue').classList.toggle('hidden', !data.ok);
