@@ -135,6 +135,11 @@
     transition: border-color .15s, background .15s; }
   .pill input:checked + span { border-color: var(--accent); background: var(--soft); color: var(--accent); }
   .pill input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .select { width: 100%; font: 500 16px var(--sans); color: var(--ink); padding: 14px 44px 14px 14px;
+    border: 1px solid var(--line); border-radius: 12px; background: #fff
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233f5a45' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 16px center; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .select:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
   .check { display: flex; gap: 10px; align-items: center; margin-top: 16px; font-weight: 500; cursor: pointer; }
   .check input { width: 20px; height: 20px; accent-color: var(--accent); }
   input[type=text], textarea { width: 100%; font: inherit; padding: 12px 13px; border: 1px solid var(--line);
@@ -293,7 +298,7 @@
       hideMap: 'Slėpti žemėlapį',
       gallery: 'Mūsų akimirkos',
       rsvp: 'Ar dalyvausite?',
-      deadline: d => 'Prašome atsakyti iki ' + d + '.',
+      deadline: d => 'Prašome atsakyti iki ' + d.replace(/\.$/, '') + '.',
       willYou: 'Ar švęsite kartu su mumis?',
       willYouCouple: 'Kas iš jūsų atvyks?',
       accept: 'Mielai dalyvausiu',
@@ -361,7 +366,7 @@
       hideMap: 'Hide map',
       gallery: 'A few of our moments',
       rsvp: 'Will you join us?',
-      deadline: d => 'Kindly reply by ' + d + '.',
+      deadline: d => 'Kindly reply by ' + d.replace(/\.$/, '') + '.',
       willYou: 'Will you celebrate with us?',
       willYouCouple: 'Who will be joining us?',
       accept: 'Joyfully accept',
@@ -624,7 +629,7 @@
   function initForm() {
     const r = S.inv.response || {};
     S.form = {
-      choice: r.choice || '',
+      choice: r.choice || (S.inv.type === 'couple' ? 'both' : 'yes'),
       plusOne: !!r.plusOne,
       plusName: r.plusName || '',
       meals: JSON.parse(JSON.stringify(r.meals || {})),
@@ -668,8 +673,9 @@
       ? [['both', t('both')], ['g1', t('only', firstName(g1))], ['g2', t('only', firstName(g2))], ['none', t('neither')]]
       : [['yes', t('accept')], ['no', t('decline')]];
     const people = comingPeople();
-    let html = `<span class="q">${esc(inv.type === 'couple' ? t('willYouCouple') : t('willYou'))}</span>
-      <div class="choice">${choices.map(c => pill('choice', c[0], c[1], f.choice === c[0])).join('')}</div>`;
+    let html = `<label class="q" for="choice">${esc(inv.type === 'couple' ? t('willYouCouple') : t('willYou'))}</label>
+      <select id="choice" name="choice" class="select">${choices.map(c =>
+        `<option value="${esc(c[0])}"${f.choice === c[0] ? ' selected' : ''}>${esc(c[1])}</option>`).join('')}</select>`;
 
     if (inv.type === 'plus' && f.choice === 'yes') {
       html += `<label class="check"><input type="checkbox" name="plusOne"${f.plusOne ? ' checked' : ''}> ${esc(t('plusOne'))}</label>`;
