@@ -106,13 +106,15 @@
   .event .where { color: var(--muted); margin: 2px 0; }
   .event .notes { margin: 12px 0 0; font-style: italic; font-family: var(--serif); font-size: 19px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .actions .chip { justify-content: center; padding: 10px 8px; white-space: nowrap; }
   .chip { display: inline-flex; align-items: center; gap: 6px; font: 500 13px var(--sans); padding: 8px 14px;
     border-radius: 999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none; background: #fff;
     cursor: pointer; }
   .chip:hover { border-color: var(--accent); color: var(--accent); }
   .chip svg { width: 14px; height: 14px; }
   .map { margin-top: 14px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
-  .map iframe { display: block; width: 100%; height: 260px; border: 0; }
+  .map iframe { display: block; width: 100%; height: 220px; border: 0; background: var(--soft); }
   .whole-day { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap;
     gap: 10px; align-items: center; font-size: 14px; color: var(--muted); }
 
@@ -227,10 +229,6 @@
         <p class="greet" id="greet"></p>
         <p class="lead" id="intro"></p>
         <p class="intro-note" data-i18n="introEditNote"></p>
-        <div class="whole-day" style="justify-content:center">
-          <span data-i18n="addAll"></span>
-          <a class="chip" id="icsAll" target="_blank" rel="noopener">Apple / Outlook</a>
-        </div>
       </article>
     </section>
 
@@ -327,7 +325,7 @@
       lastSaved: d => 'Išsaugota ' + d + '.',
       editAgain: 'Norite ką nors pakeisti? Pataisykite žemiau ir išsaugokite dar kartą.',
       photosTitle: 'Nuotraukos su mumis',
-      photosText: 'Turite mėgstamą nuotrauką su mumis? Įkelkite vieną ar kelias — labai norėtume jas pamatyti. Neprivaloma.',
+      photosText: 'Neprivaloma. Būtų smagu. Bet neprivaloma. Šiuos kvietimus kūrėme ilgiau, nei jums užtruktų įkelti nuotrauką. Bet tai neprivaloma.',
       choosePhotos: 'Pasirinkti nuotraukas',
       uploading: (a, b) => 'Įkeliama ' + a + ' iš ' + b + '…',
       photoCount: (n, m) => 'Įkelta nuotraukų: ' + n + ' iš ' + m,
@@ -395,7 +393,7 @@
       lastSaved: d => 'Saved ' + d + '.',
       editAgain: 'Need to change something? Edit below and save again.',
       photosTitle: 'Photos with us',
-      photosText: 'Do you have a favourite photo with us? Add one or a few — we would love to see them. Optional.',
+      photosText: "Optional. Would be nice. But optional. These invitations took longer to make than it would take you to upload a photo. But it's optional.",
       choosePhotos: 'Choose photos',
       uploading: (a, b) => 'Uploading ' + a + ' of ' + b + '…',
       photoCount: (n, m) => n + ' of ' + m + ' photos shared',
@@ -554,7 +552,6 @@
   function renderIntro() {
     $('greet').textContent = greetingText();
     $('intro').textContent = tx(S.cfg.intro);
-    $('icsAll').href = API + '?ics=all&lang=' + S.lang;
   }
 
   const ICON_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
@@ -578,12 +575,16 @@
           <p class="when">${esc(cap(fmt(e.start, { weekday: 'long', month: 'long', day: 'numeric' })))} · ${esc(hm(e.start))}–${esc(hm(e.end))}</p>
           <p class="where">${esc(e.location)}</p>
           ${notes ? `<p class="notes">${esc(notes)}</p>` : ''}
-          <div class="chips">
+          <div class="actions">
             <a class="chip" href="${esc(gUrl)}" target="_blank" rel="noopener">${ICON_CAL}${esc(t('google'))}</a>
             <a class="chip" href="${esc(API + '?ics=' + i + '&lang=' + S.lang)}" target="_blank" rel="noopener">${ICON_CAL}${esc(t('apple'))}</a>
-            <button type="button" class="chip" data-map="${i}" aria-expanded="false">${ICON_PIN}${esc(t('showMap'))}</button>
           </div>
-          <div class="map hidden" id="map${i}"></div>
+          <div class="map"><iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="${esc(e.location)}"
+            src="https://maps.google.com/maps?q=${encodeURIComponent(e.location)}&z=15&output=embed"></iframe></div>
+          <div class="actions">
+            <a class="chip" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.location)}" target="_blank" rel="noopener">${ICON_PIN}Google Maps</a>
+            <a class="chip" href="https://maps.apple.com/?q=${encodeURIComponent(e.location)}" target="_blank" rel="noopener">${ICON_PIN}Apple Maps</a>
+          </div>
         </article>
       </section>`;
     }).join('');
@@ -898,21 +899,6 @@
   });
 
   $('form').addEventListener('submit', e => { e.preventDefault(); if (!S.saving) submit(); });
-
-  $('events').addEventListener('click', e => {
-    const btn = e.target.closest('[data-map]');
-    if (!btn) return;
-    const i = Number(btn.dataset.map);
-    const box = $('map' + i);
-    if (!box.firstChild) {
-      const q = encodeURIComponent(S.cfg.events[i].location);
-      box.innerHTML = `<iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map"
-        src="https://maps.google.com/maps?q=${q}&z=15&output=embed"></iframe>`;
-    }
-    const open = box.classList.toggle('hidden') === false;
-    btn.setAttribute('aria-expanded', String(open));
-    btn.lastChild.textContent = open ? t('hideMap') : t('showMap');
-  });
 
   $('photoInput').addEventListener('change', e => {
     const files = e.target.files;
