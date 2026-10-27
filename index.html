@@ -1,303 +1,876 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="lt">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Wedding invitation</title>
+<meta name="color-scheme" content="light">
+<title>Kvietimas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f7f3ec; --card: #fffdf9; --ink: #2b2a26; --muted: #77716a;
-    --line: #e4dccf; --accent: #3f5a45; --accent-ink: #fff; --soft: #eef2ec;
+    --bg: #f7f3ec;
+    --card: rgba(255, 253, 249, 0.96);
+    --ink: #2b2a26;
+    --muted: #6f6a63;
+    --line: #e4dccf;
+    --accent: #3f5a45;
+    --accent-ink: #ffffff;
+    --soft: #eef2ec;
     --warn: #9b3b2f;
+    --warn-soft: #f9e7e4;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: Inter, system-ui, -apple-system, sans-serif;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink);
-    font: 16px/1.55 Inter, system-ui, sans-serif; }
-  .wrap { max-width: 640px; margin: 0 auto; padding: 32px 16px 64px; }
-  .hero { text-align: center; padding: 40px 8px 28px; }
-  .eyebrow { letter-spacing: .22em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
-  h1 { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 48px;
-    line-height: 1.1; margin: 14px 0 10px; }
-  .date { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--accent); }
-  .rule { width: 56px; height: 1px; background: var(--accent); margin: 24px auto; opacity: .5; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 28px 24px; margin-top: 20px; }
-  h2 { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 28px; margin: 0 0 6px; }
-  .sub { color: var(--muted); margin: 0 0 18px; }
-  .greet { font-family: 'Cormorant Garamond', serif; font-size: 26px; margin: 0 0 8px; }
-
-  .event { padding: 18px 0; border-top: 1px solid var(--line); }
-  .event:first-of-type { border-top: 0; padding-top: 4px; }
-  .event h3 { margin: 0; font-size: 17px; font-weight: 600; }
-  .when { color: var(--accent); font-weight: 500; font-size: 14px; margin: 2px 0; }
-  .where, .notes { color: var(--muted); font-size: 14px; margin: 2px 0; }
-  .cal { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500;
-    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
-    color: var(--ink); text-decoration: none; background: #fff; }
-  .chip:hover { border-color: var(--accent); color: var(--accent); }
-  .all-cal { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--line);
-    display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
-
-  label.q { display: block; font-weight: 600; font-size: 14px; margin: 20px 0 8px; }
-  .choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .choice input { position: absolute; opacity: 0; pointer-events: none; }
-  .choice span { display: block; text-align: center; padding: 14px 10px; border-radius: 10px;
-    border: 1px solid var(--line); cursor: pointer; font-weight: 500; background: #fff; }
-  .choice input:checked + span { border-color: var(--accent); background: var(--soft); color: var(--accent); }
-  .choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
-  input[type=text], select, textarea { width: 100%; font: inherit; padding: 11px 12px;
-    border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
-  input[type=text]:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
-  textarea { min-height: 84px; resize: vertical; }
-  .names input + input { margin-top: 8px; }
-  .hint { font-size: 13px; color: var(--muted); margin-top: 6px; }
-  button { margin-top: 26px; width: 100%; padding: 15px; border: 0; border-radius: 10px;
-    background: var(--accent); color: var(--accent-ink); font: 600 16px Inter, sans-serif; cursor: pointer; }
-  button:disabled { opacity: .6; cursor: default; }
-  .banner { border-radius: 10px; padding: 12px 14px; font-size: 14px; margin-bottom: 4px; }
-  .banner.ok { background: var(--soft); color: var(--accent); }
-  .banner.err { background: #f9e7e4; color: var(--warn); }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased; }
+  img { max-width: 100%; display: block; }
   .hidden { display: none !important; }
-  .center { text-align: center; color: var(--muted); }
-  .foot { text-align: center; color: var(--muted); font-size: 13px; margin-top: 28px; }
-  @media (max-width: 420px) { h1 { font-size: 38px; } .card { padding: 22px 18px; } }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- Scroll-changing photo backgrounds ---------- */
+  .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .bg-layer { position: absolute; inset: 0; background: center / cover no-repeat; opacity: 0;
+    transform: scale(1.06); transition: opacity 1.2s ease, transform 9s ease-out; }
+  .bg-layer::after { content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(22,20,17,.42) 0%, rgba(22,20,17,.18) 45%, rgba(22,20,17,.5) 100%); }
+  .bg-layer.ready.on { opacity: 1; transform: scale(1); }
+  .page { position: relative; z-index: 1; }
+
+  /* ---------- Language switch ---------- */
+  .lang { position: fixed; top: max(14px, env(safe-area-inset-top)); right: 14px; z-index: 20; display: flex;
+    background: rgba(255,255,255,.88); border-radius: 999px; padding: 3px; box-shadow: 0 4px 18px rgba(0,0,0,.12);
+    backdrop-filter: blur(8px); }
+  .lang button { border: 0; background: transparent; font: 600 12px var(--sans); letter-spacing: .08em;
+    padding: 7px 12px; border-radius: 999px; color: var(--muted); cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+
+  /* ---------- Hero ---------- */
+  .hero { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    text-align: center; padding: 96px 16px max(40px, 7svh); }
+  .eyebrow { letter-spacing: .28em; text-transform: uppercase; font-size: 12px; font-weight: 500; color: var(--muted); }
+  .hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(46px, 11vw, 96px); line-height: 1.02;
+    margin: 18px 0 14px; }
+  .hero .date { font-family: var(--serif); font-style: italic; font-size: clamp(20px, 4.4vw, 28px); color: var(--accent); }
+  .hero .rule { width: 64px; height: 1px; background: currentColor; opacity: .5; margin: 26px auto 0; }
+  .scroll-cue { margin-top: 28px; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; opacity: .8;
+    text-decoration: none; color: inherit; }
+  .scroll-cue span { display: block; font-size: 20px; margin-top: 4px; animation: bob 2.4s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(6px); } }
+  @media (min-aspect-ratio: 1/1) {
+    .hero { justify-content: flex-start; padding-top: max(80px, 9svh); }
+  }
+  body.hero-photo .hero { color: #fff; text-shadow: 0 2px 30px rgba(0,0,0,.35); }
+  body.hero-photo .hero .eyebrow, body.hero-photo .hero .date { color: #fff; }
+
+  /* ---------- Panels & cards ---------- */
+  .panel { min-height: 92svh; display: flex; align-items: center; justify-content: center; padding: 72px 16px; }
+  .panel.compact { min-height: 0; padding: 28px 16px; }
+  .panel.photo-panel { align-items: flex-end; padding-bottom: max(32px, 7svh); }
+  .panel.first-plain { padding-top: 80px; }
+  .card { width: 100%; max-width: 600px; background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: 34px 28px; box-shadow: 0 24px 70px rgba(0,0,0,.14); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .card.center { text-align: center; }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: 34px; line-height: 1.15; margin: 0 0 8px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  .greet { font-family: var(--serif); font-size: 30px; line-height: 1.2; margin: 0 0 12px; }
+  .lead { font-size: 17px; margin: 0; }
+  .ornament { display: block; text-align: center; color: var(--accent); font-family: var(--serif); font-size: 22px; margin-bottom: 6px; }
+
+  /* ---------- Events ---------- */
+  .event .time-big { font-family: var(--serif); font-size: 46px; line-height: 1; color: var(--accent); margin: 0 0 8px; }
+  .event .when { font-weight: 500; margin: 2px 0; }
+  .event .where { color: var(--muted); margin: 2px 0; }
+  .event .notes { margin: 12px 0 0; font-style: italic; font-family: var(--serif); font-size: 19px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font: 500 13px var(--sans); padding: 8px 14px;
+    border-radius: 999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none; background: #fff;
+    cursor: pointer; }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip svg { width: 14px; height: 14px; }
+  .map { margin-top: 14px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+  .map iframe { display: block; width: 100%; height: 260px; border: 0; }
+  .whole-day { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap;
+    gap: 10px; align-items: center; font-size: 14px; color: var(--muted); }
+
+  /* ---------- Gallery ---------- */
+  .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 18px; }
+  .gallery button { padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 12px; overflow: hidden; }
+  .gallery img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform .5s ease; }
+  .gallery button:hover img { transform: scale(1.04); }
+  .lightbox { position: fixed; inset: 0; z-index: 50; background: rgba(15,14,12,.92); display: flex; align-items: center;
+    justify-content: center; padding: 20px; cursor: zoom-out; }
+  .lightbox img { max-height: 90vh; width: auto; border-radius: 8px; }
+
+  /* ---------- Form ---------- */
+  .q { display: block; font-weight: 600; font-size: 14px; margin: 22px 0 8px; }
+  .choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pill { position: relative; }
+  .pill input { position: absolute; opacity: 0; pointer-events: none; }
+  .pill span { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 52px;
+    padding: 10px; border-radius: 12px; border: 1px solid var(--line); cursor: pointer; font-weight: 500; background: #fff;
+    transition: border-color .15s, background .15s; }
+  .pill input:checked + span { border-color: var(--accent); background: var(--soft); color: var(--accent); }
+  .pill input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .check { display: flex; gap: 10px; align-items: center; margin-top: 16px; font-weight: 500; cursor: pointer; }
+  .check input { width: 20px; height: 20px; accent-color: var(--accent); }
+  input[type=text], textarea { width: 100%; font: inherit; padding: 12px 13px; border: 1px solid var(--line);
+    border-radius: 10px; background: #fff; color: var(--ink); }
+  input[type=text]:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  textarea { min-height: 90px; resize: vertical; }
+  .person { margin-top: 14px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #fcfaf6; }
+  .person-name { font-family: var(--serif); font-size: 22px; margin: 0 0 4px; }
+  .course { font-size: 13px; font-weight: 600; color: var(--muted); margin: 12px 0 6px; letter-spacing: .02em; }
+  .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .opts .pill span { min-height: 44px; font-size: 14px; }
+  .btn { margin-top: 26px; width: 100%; padding: 16px; border: 0; border-radius: 12px; background: var(--accent);
+    color: var(--accent-ink); font: 600 16px var(--sans); cursor: pointer; }
+  .btn:disabled { opacity: .6; cursor: default; }
+  .btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+    padding: 14px; margin-top: 16px; border: 1.5px dashed var(--accent); border-radius: 12px; color: var(--accent);
+    font-weight: 600; cursor: pointer; background: transparent; }
+  .btn-outline.disabled { opacity: .5; pointer-events: none; }
+  .banner { border-radius: 12px; padding: 13px 15px; font-size: 14px; }
+  .banner.ok { background: var(--soft); color: var(--accent); margin-bottom: 6px; }
+  .banner.err { background: var(--warn-soft); color: var(--warn); margin-top: 16px; }
+  .hint { font-size: 13px; color: var(--muted); margin: 10px 0 0; text-align: center; }
+
+  /* ---------- Photos ---------- */
+  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 8px; margin-top: 6px; }
+  .thumb { position: relative; margin: 0; border-radius: 10px; overflow: hidden; background: var(--soft); aspect-ratio: 1; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb .ph { display: flex; height: 100%; align-items: center; justify-content: center; color: var(--muted); font-size: 22px; }
+  .thumb button { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border-radius: 50%; border: 0;
+    background: rgba(0,0,0,.6); color: #fff; font-size: 14px; line-height: 26px; cursor: pointer; padding: 0; }
+
+  .foot { text-align: center; color: var(--muted); font-size: 13px; padding: 24px 16px 56px; }
+
+  @media (max-width: 440px) {
+    .card { padding: 26px 18px; }
+    h2 { font-size: 30px; }
+    .event .time-big { font-size: 40px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .bg-layer { transition: none; transform: none; }
+    .scroll-cue span { animation: none; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="hero">
-    <div class="eyebrow" id="heroLine">&nbsp;</div>
-    <h1 id="couple">&nbsp;</h1>
-    <div class="date" id="date"></div>
-  </header>
+<div class="bg" id="bg" aria-hidden="true"></div>
 
-  <div id="loading" class="card center">Opening your invitation…</div>
-
-  <div id="unknown" class="card center hidden">
-    <h2>Invitation not found</h2>
-    <p>Please open the personal link you received. If it still doesn't work, get in touch with us.</p>
-  </div>
-
-  <main id="main" class="hidden">
-    <section class="card">
-      <p class="greet" id="greet"></p>
-      <p class="sub" id="intro"></p>
-    </section>
-
-    <section class="card">
-      <h2>The day</h2>
-      <p class="sub">Add any part of the day straight to your calendar.</p>
-      <div id="events"></div>
-      <div class="all-cal">
-        Whole itinerary:
-        <a class="chip" id="allApple" href="#">Apple / Outlook (.ics)</a>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>RSVP</h2>
-      <p class="sub" id="deadline"></p>
-      <div id="status" class="banner ok hidden"></div>
-      <form id="form" novalidate>
-        <label class="q">Will you join us?</label>
-        <div class="choice">
-          <label><input type="radio" name="attending" value="yes"><span>Joyfully accept</span></label>
-          <label><input type="radio" name="attending" value="no"><span>Regretfully decline</span></label>
-        </div>
-
-        <div id="yesFields" class="hidden">
-          <div id="countWrap">
-            <label class="q" for="count">How many of you are coming?</label>
-            <select id="count"></select>
-          </div>
-          <label class="q">Names of everyone coming</label>
-          <div class="names" id="names"></div>
-
-          <label class="q" for="dietary">Dietary needs or allergies</label>
-          <input type="text" id="dietary" maxlength="500" placeholder="e.g. vegetarian, no nuts">
-
-          <div id="songWrap">
-            <label class="q" for="song">A song that will get you dancing</label>
-            <input type="text" id="song" maxlength="200" placeholder="Optional">
-          </div>
-        </div>
-
-        <label class="q" for="message">A note for us</label>
-        <textarea id="message" maxlength="2000" placeholder="Optional"></textarea>
-
-        <div id="error" class="banner err hidden" style="margin-top:16px"></div>
-        <button type="submit" id="submit">Send reply</button>
-        <p class="hint center">You can come back to this same link to change your reply at any time.</p>
-      </form>
-    </section>
-
-    <p class="foot" id="contact"></p>
-  </main>
+<div class="lang" role="group" aria-label="Language">
+  <button type="button" data-lang="lt" aria-pressed="true">LT</button>
+  <button type="button" data-lang="en" aria-pressed="false">EN</button>
 </div>
 
+<div class="page">
+  <header class="hero" data-bg="hero">
+    <div class="eyebrow" id="heroLine">&nbsp;</div>
+    <h1 id="couple">&nbsp;</h1>
+    <div class="date" id="heroDate">&nbsp;</div>
+    <div class="rule"></div>
+    <a class="scroll-cue hidden" id="scrollCue" href="#start"><span data-i18n="scroll"></span><span aria-hidden="true">↓</span></a>
+  </header>
 
+  <section class="panel compact" data-bg="hero" id="statusPanel">
+    <div class="card center" id="loading" data-i18n="loading"></div>
+    <div class="card center hidden" id="unknown">
+      <h2 data-i18n="notFoundTitle"></h2>
+      <p class="sub" data-i18n="notFoundText" style="margin:0"></p>
+    </div>
+  </section>
+
+  <main id="main" class="hidden">
+    <section class="panel" data-bg="hero" id="start">
+      <article class="card center">
+        <span class="ornament">❦</span>
+        <p class="greet" id="greet"></p>
+        <p class="lead" id="intro"></p>
+        <div class="whole-day" style="justify-content:center">
+          <span data-i18n="addAll"></span>
+          <a class="chip" id="icsAll" target="_blank" rel="noopener">Apple / Outlook</a>
+        </div>
+      </article>
+    </section>
+
+    <div id="events"></div>
+
+    <section class="panel compact first-plain hidden" data-bg="none" id="gallerySec">
+      <article class="card">
+        <h2 data-i18n="gallery"></h2>
+        <div class="gallery" id="gallery"></div>
+      </article>
+    </section>
+
+    <section class="panel compact" data-bg="none" id="rsvpSec">
+      <article class="card">
+        <h2 data-i18n="rsvp"></h2>
+        <p class="sub" id="deadline"></p>
+        <div id="status" class="banner ok hidden" role="status"></div>
+        <form id="form" novalidate></form>
+      </article>
+    </section>
+
+    <section class="panel compact hidden" data-bg="none" id="photosSec">
+      <article class="card">
+        <h2 data-i18n="photosTitle"></h2>
+        <p class="sub" data-i18n="photosText"></p>
+        <div class="thumbs" id="thumbs"></div>
+        <label class="btn-outline" id="photoBtn">
+          <input type="file" accept="image/*" multiple class="sr-only" id="photoInput">
+          <span aria-hidden="true">＋</span><span data-i18n="choosePhotos"></span>
+        </label>
+        <p class="hint" id="photoStatus"></p>
+        <div class="banner err hidden" id="photoErr"></div>
+      </article>
+    </section>
+  </main>
+
+  <p class="foot" id="contact" data-bg="none"></p>
+</div>
+
+<script src="config.js"></script>
 <script>
-  // ⬇ Paste your Apps Script web app URL (ends in /exec) here
-  const API = 'https://script.google.com/macros/s/AKfycbxxg0yG2AXq_Kl1syyCaMXP3_aNdMunbBpKHCrSNfkkIFWe8A5FavIQkWd2NW1fcS-j/exec';
-
+  const API = window.RSVP_API || '';
   const TOKEN = (new URLSearchParams(location.search).get('i') || '').replace(/[^a-zA-Z0-9]/g, '');
-  const $ = id => document.getElementById(id);
-  let invite = null;
 
+  const T = {
+    lt: {
+      loading: 'Atidaromas jūsų kvietimas…',
+      notFoundTitle: 'Kvietimas nerastas',
+      notFoundText: 'Atidarykite asmeninę nuorodą, kurią gavote. Jei ji neveikia, susisiekite su mumis.',
+      loadError: 'Nepavyko įkelti kvietimo. Perkraukite puslapį.',
+      notConfigured: 'Svetainė dar neprijungta (config.js).',
+      scroll: 'Slinkite žemyn',
+      dear: n => 'Sveiki, ' + n + '!',
+      and: 'ir',
+      addAll: 'Visa diena į kalendorių:',
+      google: 'Google kalendorius',
+      apple: 'Apple kalendorius',
+      showMap: 'Žemėlapis',
+      hideMap: 'Slėpti žemėlapį',
+      gallery: 'Mūsų akimirkos',
+      rsvp: 'Ar dalyvausite?',
+      deadline: d => 'Prašome atsakyti iki ' + d + '.',
+      willYou: 'Ar švęsite kartu su mumis?',
+      willYouCouple: 'Kas iš jūsų atvyks?',
+      accept: 'Mielai dalyvausiu',
+      decline: 'Deja, negalėsiu',
+      both: 'Atvyksime abu',
+      only: n => 'Atvyks tik ' + n,
+      neither: 'Deja, negalėsime',
+      plusOne: 'Atsivesiu svečią (+1)',
+      plusName: 'Svečio vardas ir pavardė',
+      yourGuest: 'Jūsų svečias',
+      menuTitle: 'Meniu',
+      menuHint: 'Kiekvienam atvykstančiam pasirinkite užkandį ir pagrindinį patiekalą.',
+      starter: 'Užkandis',
+      main: 'Pagrindinis patiekalas',
+      dietary: 'Mitybos poreikiai ar alergijos',
+      dietaryPh: 'pvz., vegetariškas maistas, be riešutų',
+      song: 'Daina, kuri jus išjudins šokiui',
+      optional: 'Neprivaloma',
+      message: 'Žinutė mums',
+      send: 'Siųsti atsakymą',
+      update: 'Atnaujinti atsakymą',
+      saving: 'Saugoma…',
+      editHint: 'Atsakymą bet kada galėsite pakeisti per tą pačią nuorodą.',
+      savedYes: 'Jūs sąraše — nekantraujame jus pamatyti!',
+      savedNo: 'Ačiū, kad pranešėte — mums jūsų trūks.',
+      lastSaved: d => 'Išsaugota ' + d + '.',
+      editAgain: 'Norite ką nors pakeisti? Pataisykite žemiau ir išsaugokite dar kartą.',
+      photosTitle: 'Pasidalinkite nuotraukomis',
+      photosText: 'Turite mėgstamą nuotrauką su mumis? Įkelkite vieną ar kelias — labai norėtume jas pamatyti.',
+      choosePhotos: 'Pasirinkti nuotraukas',
+      uploading: (a, b) => 'Įkeliama ' + a + ' iš ' + b + '…',
+      photoCount: (n, m) => 'Įkelta nuotraukų: ' + n + ' iš ' + m,
+      remove: 'Pašalinti',
+      removeConfirm: 'Pašalinti šią nuotrauką?',
+      errors: {
+        ERR_CHOICE: 'Prašome pasirinkti, ar atvyksite.',
+        ERR_PLUS_NAME: 'Įrašykite savo svečio vardą.',
+        ERR_MEAL: 'Kiekvienam atvykstančiam pasirinkite užkandį ir pagrindinį patiekalą.',
+        ERR_NOT_FOUND: 'Ši kvietimo nuoroda neatpažinta.',
+        ERR_PHOTO_LIMIT: 'Pasiektas nuotraukų limitas.',
+        ERR_PHOTO_SIZE: 'Nuotrauka per didelė.',
+        ERR_PHOTO_FORMAT: 'Nepavyko nuskaityti nuotraukos. Pabandykite JPG arba PNG.',
+        ERR_PHOTOS_OFF: 'Nuotraukų įkėlimas išjungtas.',
+        generic: 'Kažkas nepavyko — bandykite dar kartą.'
+      }
+    },
+    en: {
+      loading: 'Opening your invitation…',
+      notFoundTitle: 'Invitation not found',
+      notFoundText: "Please open the personal link you received. If it doesn't work, get in touch with us.",
+      loadError: 'Could not load your invitation. Please refresh the page.',
+      notConfigured: 'This site is not connected yet (config.js).',
+      scroll: 'Scroll',
+      dear: n => 'Dear ' + n + ',',
+      and: '&',
+      addAll: 'Whole day to your calendar:',
+      google: 'Google Calendar',
+      apple: 'Apple Calendar',
+      showMap: 'Map',
+      hideMap: 'Hide map',
+      gallery: 'A few of our moments',
+      rsvp: 'Will you join us?',
+      deadline: d => 'Kindly reply by ' + d + '.',
+      willYou: 'Will you celebrate with us?',
+      willYouCouple: 'Who will be joining us?',
+      accept: 'Joyfully accept',
+      decline: 'Regretfully decline',
+      both: 'Both of us',
+      only: n => 'Only ' + n,
+      neither: "We can't make it",
+      plusOne: "I'll bring a guest (+1)",
+      plusName: "Your guest's full name",
+      yourGuest: 'Your guest',
+      menuTitle: 'Menu',
+      menuHint: 'Please choose a starter and a main for everyone coming.',
+      starter: 'Starter',
+      main: 'Main course',
+      dietary: 'Dietary needs or allergies',
+      dietaryPh: 'e.g. vegetarian, no nuts',
+      song: 'A song that will get you dancing',
+      optional: 'Optional',
+      message: 'A note for us',
+      send: 'Send reply',
+      update: 'Update reply',
+      saving: 'Saving…',
+      editHint: 'You can come back to this same link to change your reply at any time.',
+      savedYes: "You're on the list — we can't wait to see you!",
+      savedNo: "Thank you for letting us know — you'll be missed.",
+      lastSaved: d => 'Saved ' + d + '.',
+      editAgain: 'Need to change something? Edit below and save again.',
+      photosTitle: 'Share your photos with us',
+      photosText: 'Do you have a favourite photo with us? Add one or a few — we would love to see them.',
+      choosePhotos: 'Choose photos',
+      uploading: (a, b) => 'Uploading ' + a + ' of ' + b + '…',
+      photoCount: (n, m) => n + ' of ' + m + ' photos shared',
+      remove: 'Remove',
+      removeConfirm: 'Remove this photo?',
+      errors: {
+        ERR_CHOICE: 'Please let us know whether you can come.',
+        ERR_PLUS_NAME: "Please enter your guest's name.",
+        ERR_MEAL: 'Please choose a starter and a main for everyone coming.',
+        ERR_NOT_FOUND: 'This invitation link was not recognised.',
+        ERR_PHOTO_LIMIT: 'You have reached the photo limit.',
+        ERR_PHOTO_SIZE: 'This photo is too large.',
+        ERR_PHOTO_FORMAT: 'This photo could not be read. Please try a JPG or PNG.',
+        ERR_PHOTOS_OFF: 'Photo sharing is turned off.',
+        generic: 'Something went wrong — please try again.'
+      }
+    }
+  };
+
+  const S = { lang: 'lt', cfg: null, inv: null, form: null, saving: false, formErr: '', photoBusy: '', photoErr: '' };
+  const $ = id => document.getElementById(id);
+
+  /* ---------- helpers ---------- */
+  function t(key) {
+    const args = Array.prototype.slice.call(arguments, 1);
+    const v = T[S.lang][key] !== undefined ? T[S.lang][key] : T.en[key];
+    return typeof v === 'function' ? v.apply(null, args) : v;
+  }
+  function tx(v) {
+    if (v && typeof v === 'object') return v[S.lang] || v.en || v.lt || '';
+    return v == null ? '' : String(v);
+  }
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
+  function errText(e) {
+    const code = (e && e.message) || e;
+    const errs = T[S.lang].errors;
+    return errs[code] || errs.generic;
+  }
+  const locale = () => (S.lang === 'lt' ? 'lt-LT' : 'en-GB');
+  function fmt(iso, opts) {
+    return new Intl.DateTimeFormat(locale(), Object.assign({ timeZone: S.cfg.timeZone }, opts)).format(new Date(iso));
+  }
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const hm = iso => fmt(iso, { hour: '2-digit', minute: '2-digit', hour12: false });
+  const gStamp = iso => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const firstName = n => String(n || '').trim().split(/\s+/)[0];
 
-  async function api(method, payload) {
-    const opts = method === 'POST'
-      ? { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }
-      : { method: 'GET' };
-    const url = method === 'POST' ? API : API + '?action=invite&i=' + encodeURIComponent(TOKEN);
-    const res = await fetch(url, opts);
-    if (!res.ok) throw new Error('Network error (' + res.status + ')');
-    return res.json();
+  async function post(body) {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(Object.assign({ token: TOKEN }, body))
+    });
+    if (!res.ok) throw new Error('generic');
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'generic');
+    return data;
   }
 
-  function renderConfig(c) {
-    document.title = c.coupleNames + ' — Wedding';
-    $('heroLine').textContent = c.heroLine;
+  /* ---------- backgrounds ---------- */
+  function buildBackgrounds() {
+    const bg = $('bg');
+    bg.innerHTML = '';
+    const layers = [['hero', S.cfg.heroImage, S.cfg.heroImageFocus]]
+      .concat(S.cfg.events.map((e, i) => ['ev' + i, e.image, e.imageFocus]));
+    layers.forEach(([key, src, focus]) => {
+      if (!src) return;
+      const div = document.createElement('div');
+      div.className = 'bg-layer';
+      div.dataset.key = key;
+      if (focus && /^[\w\s.%-]+$/.test(focus)) div.style.backgroundPosition = focus;
+      bg.appendChild(div);
+      const img = new Image();
+      img.onload = () => {
+        div.style.backgroundImage = 'url("' + src.replace(/"/g, '%22') + '")';
+        div.classList.add('ready');
+        if (key === 'hero') document.body.classList.add('hero-photo');
+      };
+      img.onerror = () => div.remove();
+      img.src = src;
+    });
+  }
+  function setBg(key) {
+    document.querySelectorAll('.bg-layer').forEach(l => l.classList.toggle('on', l.dataset.key === key));
+  }
+  let observer = null;
+  function observeSections() {
+    if (observer) observer.disconnect();
+    observer = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) setBg(en.target.dataset.bg); });
+    }, { rootMargin: '-50% 0px -50% 0px' });
+    document.querySelectorAll('[data-bg]').forEach(el => observer.observe(el));
+  }
+
+  /* ---------- rendering ---------- */
+  function applyStatic() {
+    document.documentElement.lang = S.lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('.lang button').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
+  }
+
+  function renderHero() {
+    const c = S.cfg;
+    document.title = c.coupleNames;
+    $('heroLine').textContent = tx(c.heroLine);
     $('couple').textContent = c.coupleNames;
-    $('date').textContent = c.weddingDateText;
-    $('intro').textContent = c.intro;
-    $('deadline').textContent = 'Kindly reply by ' + c.rsvpDeadline + '.';
-    $('contact').textContent = c.contact;
-    $('allApple').href = API + '?ics=all';
-    $('allApple').target = '_blank';
-    $('songWrap').classList.toggle('hidden', !c.askSongRequest);
-    $('events').innerHTML = c.events.map((e, i) => `
-      <div class="event">
-        <h3>${esc(e.title)}</h3>
-        <p class="when">${esc(e.day)} · ${esc(e.time)}</p>
-        <p class="where">${esc(e.location)}</p>
-        ${e.notes ? `<p class="notes">${esc(e.notes)}</p>` : ''}
-        <div class="cal">
-          <a class="chip" href="${esc(e.googleUrl)}" target="_blank" rel="noopener">Google Calendar</a>
-          <a class="chip" href="${esc(API + '?ics=' + i)}" target="_blank" rel="noopener">Apple Calendar</a>
-        </div>
-      </div>`).join('');
+    $('heroDate').textContent = c.events.length
+      ? cap(fmt(c.events[0].start, { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })) : '';
+    $('contact').textContent = tx(c.contact);
   }
 
-  function setNameFields(n, values) {
-    const box = $('names');
-    const current = [...box.querySelectorAll('input')].map(i => i.value);
-    const vals = values || current;
+  function greetingText() {
+    const inv = S.inv;
+    if (inv.greeting) return inv.greeting;
+    const names = inv.guests.map(firstName).join(' ' + t('and') + ' ');
+    return t('dear', names);
+  }
+
+  function renderIntro() {
+    $('greet').textContent = greetingText();
+    $('intro').textContent = tx(S.cfg.intro);
+    $('icsAll').href = API + '?ics=all&lang=' + S.lang;
+  }
+
+  const ICON_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+  const ICON_PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+
+  function renderEvents() {
+    const c = S.cfg;
+    $('events').innerHTML = c.events.map((e, i) => {
+      const title = tx(e.title);
+      const notes = tx(e.notes);
+      const gUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+        '&text=' + encodeURIComponent(c.coupleNames + ' — ' + title) +
+        '&dates=' + gStamp(e.start) + '/' + gStamp(e.end) +
+        '&details=' + encodeURIComponent(notes) +
+        '&location=' + encodeURIComponent(e.location);
+      return `
+      <section class="panel photo-panel" data-bg="ev${i}">
+        <article class="card event">
+          <p class="time-big">${esc(hm(e.start))}</p>
+          <h2>${esc(title)}</h2>
+          <p class="when">${esc(cap(fmt(e.start, { weekday: 'long', month: 'long', day: 'numeric' })))} · ${esc(hm(e.start))}–${esc(hm(e.end))}</p>
+          <p class="where">${esc(e.location)}</p>
+          ${notes ? `<p class="notes">${esc(notes)}</p>` : ''}
+          <div class="chips">
+            <a class="chip" href="${esc(gUrl)}" target="_blank" rel="noopener">${ICON_CAL}${esc(t('google'))}</a>
+            <a class="chip" href="${esc(API + '?ics=' + i + '&lang=' + S.lang)}" target="_blank" rel="noopener">${ICON_CAL}${esc(t('apple'))}</a>
+            <button type="button" class="chip" data-map="${i}" aria-expanded="false">${ICON_PIN}${esc(t('showMap'))}</button>
+          </div>
+          <div class="map hidden" id="map${i}"></div>
+        </article>
+      </section>`;
+    }).join('');
+  }
+
+  function renderGallery() {
+    const list = (S.cfg.gallery || []).filter(Boolean);
+    const box = $('gallery');
     box.innerHTML = '';
-    for (let i = 0; i < n; i++) {
-      const inp = document.createElement('input');
-      inp.type = 'text';
-      inp.maxLength = 80;
-      inp.placeholder = n === 1 ? 'Full name' : 'Guest ' + (i + 1) + ' full name';
-      inp.value = vals[i] || '';
-      box.appendChild(inp);
-    }
+    if (!list.length) { $('gallerySec').classList.add('hidden'); return; }
+    let alive = list.length;
+    list.forEach(src => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      const img = new Image();
+      img.loading = 'lazy';
+      img.alt = '';
+      img.src = src;
+      img.onerror = () => { b.remove(); if (--alive === 0) $('gallerySec').classList.add('hidden'); };
+      b.appendChild(img);
+      b.addEventListener('click', () => openLightbox(src));
+      box.appendChild(b);
+    });
+    $('gallerySec').classList.remove('hidden');
   }
 
-  function toggleYes() {
-    const v = (document.querySelector('input[name=attending]:checked') || {}).value;
-    $('yesFields').classList.toggle('hidden', v !== 'yes');
+  function openLightbox(src) {
+    const lb = document.createElement('div');
+    lb.className = 'lightbox';
+    lb.setAttribute('role', 'dialog');
+    const img = new Image();
+    img.src = src;
+    img.alt = '';
+    lb.appendChild(img);
+    const close = () => { lb.remove(); document.removeEventListener('keydown', onKey); };
+    const onKey = ev => { if (ev.key === 'Escape') close(); };
+    lb.addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
+    document.body.appendChild(lb);
   }
 
-  function renderInvite(inv) {
-    invite = inv;
-    $('greet').textContent = 'Dear ' + inv.name + ',';
+  /* ---------- RSVP form ---------- */
+  function initForm() {
+    const r = S.inv.response || {};
+    S.form = {
+      choice: r.choice || '',
+      plusOne: !!r.plusOne,
+      plusName: r.plusName || '',
+      meals: JSON.parse(JSON.stringify(r.meals || {})),
+      dietary: r.dietary || '',
+      song: r.song || '',
+      message: r.message || ''
+    };
+  }
 
-    const sel = $('count');
-    sel.innerHTML = '';
-    for (let i = 1; i <= inv.maxGuests; i++) {
-      sel.add(new Option(i === 1 ? '1 person' : i + ' people', i));
+  function comingPeople() {
+    const f = S.form, inv = S.inv, g1 = inv.guests[0], g2 = inv.guests[1];
+    if (inv.type === 'couple') {
+      return ({ both: [['g1', g1], ['g2', g2]], g1: [['g1', g1]], g2: [['g2', g2]] })[f.choice] || [];
     }
-    $('countWrap').classList.toggle('hidden', inv.maxGuests === 1);
+    if (f.choice !== 'yes') return [];
+    const p = [['g1', g1]];
+    if (inv.type === 'plus' && f.plusOne) p.push(['plus', f.plusName.trim() || t('yourGuest')]);
+    return p;
+  }
 
+  function pill(name, value, label, checked) {
+    return `<label class="pill"><input type="radio" name="${esc(name)}" value="${esc(value)}"${checked ? ' checked' : ''}><span>${esc(label)}</span></label>`;
+  }
+
+  function renderRsvp() {
+    const inv = S.inv, f = S.form, menu = S.cfg.menu || { starters: [], mains: [] };
     const r = inv.response;
+
+    $('deadline').textContent = t('deadline', tx(S.cfg.rsvpDeadline));
     if (r) {
-      const radio = document.querySelector(`input[name=attending][value=${r.attending}]`);
-      if (radio) radio.checked = true;
-      sel.value = String(Math.max(1, Math.min(inv.maxGuests, r.count || 1)));
-      setNameFields(Number(sel.value), r.names);
-      $('dietary').value = r.dietary;
-      $('song').value = r.song;
-      $('message').value = r.message;
-      $('status').textContent = (r.attending === 'yes'
-        ? "You're on the list — we can't wait to see you! "
-        : "Thank you for letting us know — you'll be missed. ")
-        + (r.updated ? 'Last saved ' + r.updated + '. ' : '')
-        + 'Need to change something? Edit below and save again.';
+      const coming = (r.choice === 'yes' || r.choice === 'both' || r.choice === 'g1' || r.choice === 'g2');
+      const when = r.updated ? fmt(r.updated, { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+      $('status').textContent = t(coming ? 'savedYes' : 'savedNo') + ' ' + (when ? t('lastSaved', when) + ' ' : '') + t('editAgain');
       $('status').classList.remove('hidden');
-      $('submit').textContent = 'Update reply';
     } else {
-      sel.value = String(inv.maxGuests);
-      setNameFields(inv.maxGuests, []);
       $('status').classList.add('hidden');
-      $('submit').textContent = 'Send reply';
     }
-    toggleYes();
-  }
 
-  function showError(msg) {
-    $('error').textContent = msg;
-    $('error').classList.remove('hidden');
-  }
+    const g1 = inv.guests[0], g2 = inv.guests[1];
+    const choices = inv.type === 'couple'
+      ? [['both', t('both')], ['g1', t('only', firstName(g1))], ['g2', t('only', firstName(g2))], ['none', t('neither')]]
+      : [['yes', t('accept')], ['no', t('decline')]];
+    const people = comingPeople();
+    let html = `<span class="q">${esc(inv.type === 'couple' ? t('willYouCouple') : t('willYou'))}</span>
+      <div class="choice">${choices.map(c => pill('choice', c[0], c[1], f.choice === c[0])).join('')}</div>`;
 
-  document.querySelectorAll('input[name=attending]').forEach(r => r.addEventListener('change', toggleYes));
-  $('count').addEventListener('change', e => setNameFields(Number(e.target.value)));
+    if (inv.type === 'plus' && f.choice === 'yes') {
+      html += `<label class="check"><input type="checkbox" name="plusOne"${f.plusOne ? ' checked' : ''}> ${esc(t('plusOne'))}</label>`;
+      if (f.plusOne) {
+        html += `<label class="q" for="plusName">${esc(t('plusName'))}</label>
+          <input type="text" id="plusName" maxlength="80" value="${esc(f.plusName)}" autocomplete="off">`;
+      }
+    }
 
-  $('form').addEventListener('submit', async e => {
-    e.preventDefault();
-    $('error').classList.add('hidden');
-    const attending = (document.querySelector('input[name=attending]:checked') || {}).value;
-    if (!attending) return showError('Please let us know whether you can come.');
-    const names = [...$('names').querySelectorAll('input')].map(i => i.value.trim());
-    if (attending === 'yes' && names.some(n => !n)) return showError('Please fill in the name of everyone coming.');
-
-    const btn = $('submit');
-    btn.disabled = true;
-    btn.textContent = 'Saving…';
-    try {
-      const res = await api('POST', {
-        token: TOKEN,
-        attending,
-        count: Number($('count').value),
-        names,
-        dietary: $('dietary').value,
-        song: $('song').value,
-        message: $('message').value
+    const hasMenu = menu.starters.length || menu.mains.length;
+    if (people.length && hasMenu) {
+      html += `<span class="q">${esc(t('menuTitle'))}</span><p class="sub" style="margin:0">${esc(t('menuHint'))}</p>`;
+      people.forEach(([key, name]) => {
+        const m = f.meals[key] || {};
+        html += `<div class="person"><p class="person-name"${key === 'plus' ? ' id="plusLabel"' : ''}>${esc(name)}</p>`;
+        if (menu.starters.length) {
+          html += `<p class="course">${esc(t('starter'))}</p><div class="opts">` +
+            menu.starters.map((o, i) => pill('s_' + key, i + 1, tx(o), m.starter === i + 1)).join('') + '</div>';
+        }
+        if (menu.mains.length) {
+          html += `<p class="course">${esc(t('main'))}</p><div class="opts">` +
+            menu.mains.map((o, i) => pill('m_' + key, i + 1, tx(o), m.main === i + 1)).join('') + '</div>';
+        }
+        html += '</div>';
       });
-      if (!res.ok) throw new Error(res.error || 'Could not save.');
-      renderInvite(res.invite);
+    }
+
+    if (people.length) {
+      html += `<label class="q" for="dietary">${esc(t('dietary'))}</label>
+        <input type="text" id="dietary" maxlength="500" placeholder="${esc(t('dietaryPh'))}" value="${esc(f.dietary)}">`;
+      if (S.cfg.askSongRequest) {
+        html += `<label class="q" for="song">${esc(t('song'))}</label>
+          <input type="text" id="song" maxlength="200" placeholder="${esc(t('optional'))}" value="${esc(f.song)}">`;
+      }
+    }
+
+    html += `<label class="q" for="message">${esc(t('message'))}</label>
+      <textarea id="message" maxlength="2000" placeholder="${esc(t('optional'))}">${esc(f.message)}</textarea>
+      ${S.formErr ? `<div class="banner err" role="alert">${esc(S.formErr)}</div>` : ''}
+      <button type="submit" class="btn"${S.saving ? ' disabled' : ''}>${esc(S.saving ? t('saving') : (r ? t('update') : t('send')))}</button>
+      <p class="hint">${esc(t('editHint'))}</p>`;
+
+    $('form').innerHTML = html;
+  }
+
+  function validate() {
+    const f = S.form, menu = S.cfg.menu || { starters: [], mains: [] };
+    if (!f.choice) return 'ERR_CHOICE';
+    if (S.inv.type === 'plus' && f.choice === 'yes' && f.plusOne && !f.plusName.trim()) return 'ERR_PLUS_NAME';
+    for (const [key] of comingPeople()) {
+      const m = f.meals[key] || {};
+      if ((menu.starters.length && !m.starter) || (menu.mains.length && !m.main)) return 'ERR_MEAL';
+    }
+    return '';
+  }
+
+  async function submit() {
+    S.formErr = '';
+    const bad = validate();
+    if (bad) { S.formErr = errText(new Error(bad)); renderRsvp(); return; }
+    const f = S.form;
+    const meals = {};
+    comingPeople().forEach(([key]) => { meals[key] = f.meals[key] || {}; });
+    S.saving = true;
+    renderRsvp();
+    try {
+      const res = await post({
+        action: 'rsvp',
+        choice: f.choice,
+        plusOne: S.inv.type === 'plus' && f.choice === 'yes' && f.plusOne,
+        plusName: f.plusName,
+        meals: meals,
+        dietary: f.dietary,
+        song: f.song,
+        message: f.message
+      });
+      const photos = S.inv.photos;
+      S.inv = res.invite;
+      S.inv.photos = res.invite.photos || photos;
+      initForm();
+      S.saving = false;
+      renderRsvp();
       $('status').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } catch (err) {
-      showError((err && err.message) || 'Something went wrong — please try again.');
-      $('submit').textContent = invite && invite.response ? 'Update reply' : 'Send reply';
-    } finally {
-      btn.disabled = false;
+    } catch (e) {
+      S.saving = false;
+      S.formErr = errText(e);
+      renderRsvp();
+    }
+  }
+
+  /* ---------- Photos ---------- */
+  function renderPhotos() {
+    if (!S.cfg.allowPhotos) { $('photosSec').classList.add('hidden'); return; }
+    $('photosSec').classList.remove('hidden');
+    const list = S.inv.photos || [];
+    const max = S.inv.maxPhotos || 10;
+    $('thumbs').innerHTML = list.map(p => `
+      <figure class="thumb">
+        ${p.thumb ? `<img src="${esc(p.thumb)}" alt="${esc(p.name)}">` : '<div class="ph" aria-hidden="true">✿</div>'}
+        <button type="button" data-remove="${esc(p.id)}" aria-label="${esc(t('remove'))}" title="${esc(t('remove'))}">✕</button>
+      </figure>`).join('');
+    const full = list.length >= max;
+    $('photoBtn').classList.toggle('disabled', full || !!S.photoBusy);
+    $('photoInput').disabled = full || !!S.photoBusy;
+    $('photoStatus').textContent = S.photoBusy || (list.length ? t('photoCount', list.length, max) : '');
+    $('photoErr').textContent = S.photoErr;
+    $('photoErr').classList.toggle('hidden', !S.photoErr);
+  }
+
+  function loadImage(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('ERR_PHOTO_FORMAT')); };
+      img.src = url;
+    });
+  }
+
+  function toJpeg(img, maxSide, quality) {
+    const w = img.naturalWidth, h = img.naturalHeight;
+    const scale = Math.min(1, maxSide / Math.max(w, h));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(w * scale));
+    canvas.height = Math.max(1, Math.round(h * scale));
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg', quality);
+  }
+
+  async function uploadFiles(fileList) {
+    const max = S.inv.maxPhotos || 10;
+    const room = max - (S.inv.photos || []).length;
+    const files = Array.from(fileList).slice(0, Math.max(0, room));
+    S.photoErr = room <= 0 || fileList.length > files.length ? errText(new Error('ERR_PHOTO_LIMIT')) : '';
+    for (let i = 0; i < files.length; i++) {
+      S.photoBusy = t('uploading', i + 1, files.length);
+      renderPhotos();
+      try {
+        const img = await loadImage(files[i]);
+        const full = toJpeg(img, 1800, 0.85);
+        const thumb = toJpeg(img, 220, 0.6);
+        const res = await post({ action: 'photo', name: files[i].name, data: full.split(',')[1], thumb: thumb });
+        S.inv.photos = res.photos;
+      } catch (e) {
+        S.photoErr = errText(e);
+      }
+    }
+    S.photoBusy = '';
+    renderPhotos();
+  }
+
+  async function removePhoto(id) {
+    if (!confirm(t('removeConfirm'))) return;
+    S.photoErr = '';
+    S.photoBusy = '…';
+    renderPhotos();
+    try {
+      const res = await post({ action: 'removePhoto', id: id });
+      S.inv.photos = res.photos;
+    } catch (e) {
+      S.photoErr = errText(e);
+    }
+    S.photoBusy = '';
+    renderPhotos();
+  }
+
+  /* ---------- wiring ---------- */
+  function renderAll() {
+    applyStatic();
+    if (!S.cfg) return;
+    renderHero();
+    if (S.inv) {
+      renderIntro();
+      renderEvents();
+      renderGallery();
+      renderRsvp();
+      renderPhotos();
+    }
+    observeSections();
+  }
+
+  document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
+    S.lang = b.dataset.lang;
+    try { localStorage.setItem('rsvp-lang', S.lang); } catch (e) { /* storage unavailable */ }
+    S.formErr = '';
+    renderAll();
+  }));
+
+  $('form').addEventListener('change', e => {
+    const el = e.target, f = S.form;
+    if (el.name === 'choice') { f.choice = el.value; S.formErr = ''; renderRsvp(); return; }
+    if (el.name === 'plusOne') { f.plusOne = el.checked; renderRsvp(); return; }
+    const m = /^([sm])_(g1|g2|plus)$/.exec(el.name || '');
+    if (m) {
+      f.meals[m[2]] = f.meals[m[2]] || {};
+      f.meals[m[2]][m[1] === 's' ? 'starter' : 'main'] = Number(el.value);
     }
   });
 
+  $('form').addEventListener('input', e => {
+    const el = e.target, f = S.form;
+    if (el.id === 'plusName') {
+      f.plusName = el.value;
+      const lbl = $('plusLabel');
+      if (lbl) lbl.textContent = el.value.trim() || t('yourGuest');
+    }
+    if (el.id === 'dietary') f.dietary = el.value;
+    if (el.id === 'song') f.song = el.value;
+    if (el.id === 'message') f.message = el.value;
+  });
+
+  $('form').addEventListener('submit', e => { e.preventDefault(); if (!S.saving) submit(); });
+
+  $('events').addEventListener('click', e => {
+    const btn = e.target.closest('[data-map]');
+    if (!btn) return;
+    const i = Number(btn.dataset.map);
+    const box = $('map' + i);
+    if (!box.firstChild) {
+      const q = encodeURIComponent(S.cfg.events[i].location);
+      box.innerHTML = `<iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map"
+        src="https://maps.google.com/maps?q=${q}&z=15&output=embed"></iframe>`;
+    }
+    const open = box.classList.toggle('hidden') === false;
+    btn.setAttribute('aria-expanded', String(open));
+    btn.lastChild.textContent = open ? t('hideMap') : t('showMap');
+  });
+
+  $('photoInput').addEventListener('change', e => {
+    const files = e.target.files;
+    if (files && files.length) uploadFiles(files).finally(() => { e.target.value = ''; });
+  });
+  $('thumbs').addEventListener('click', e => {
+    const b = e.target.closest('[data-remove]');
+    if (b && !S.photoBusy) removePhoto(b.dataset.remove);
+  });
+
+  /* ---------- start ---------- */
   (async () => {
-    if (!TOKEN) {
-      $('loading').classList.add('hidden');
-      $('unknown').classList.remove('hidden');
+    let stored = '';
+    try { stored = localStorage.getItem('rsvp-lang') || ''; } catch (e) { /* ignore */ }
+    if (stored === 'lt' || stored === 'en') S.lang = stored;
+    applyStatic();
+
+    if (!API || /PASTE-YOUR/.test(API)) {
+      $('loading').textContent = t('notConfigured');
       return;
     }
     try {
-      const res = await api('GET');
-      if (res.config) renderConfig(res.config);
+      const res = await fetch(API + '?action=invite&i=' + encodeURIComponent(TOKEN));
+      const data = await res.json();
+      if (!data.config) throw new Error('generic');
+      S.cfg = data.config;
+      if (!stored) {
+        const l = (data.invite && data.invite.lang) || S.cfg.defaultLanguage;
+        if (l === 'lt' || l === 'en') S.lang = l;
+      }
+      buildBackgrounds();
       $('loading').classList.add('hidden');
-      if (!res.ok) { $('unknown').classList.remove('hidden'); return; }
-      renderInvite(res.invite);
-      $('main').classList.remove('hidden');
-    } catch (err) {
-      $('loading').textContent = 'Could not load your invitation. Please refresh the page.';
+      $('scrollCue').classList.toggle('hidden', !data.ok);
+      if (data.ok) {
+        S.inv = data.invite;
+        initForm();
+        $('statusPanel').classList.add('hidden');
+        $('main').classList.remove('hidden');
+      } else {
+        $('unknown').classList.remove('hidden');
+      }
+      renderAll();
+      setBg('hero');
+    } catch (e) {
+      $('loading').textContent = t('loadError');
     }
   })();
 </script>
