@@ -142,11 +142,14 @@
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233f5a45' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
     no-repeat right 16px center; -webkit-appearance: none; appearance: none; cursor: pointer; }
   .select:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
-  .check { display: flex; gap: 10px; align-items: center; margin-top: 16px; font-weight: 500; cursor: pointer; }
+  .check { display: flex; gap: 10px; align-items: flex-start; margin-top: 16px; font-weight: 500; cursor: pointer; line-height: 1.45; }
+  .check input { flex-shrink: 0; margin: 1px 0 0; }
+  .remind-opts .check { margin-top: 10px; }
   .check input { width: 20px; height: 20px; accent-color: var(--accent); }
-  input[type=text], textarea { width: 100%; font: inherit; padding: 12px 13px; border: 1px solid var(--line);
+  .field-hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  input[type=text], input[type=email], textarea { width: 100%; font: inherit; padding: 12px 13px; border: 1px solid var(--line);
     border-radius: 10px; background: #fff; color: var(--ink); }
-  input[type=text]:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  input[type=text]:focus, input[type=email]:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
   textarea { min-height: 90px; resize: vertical; }
   .person { margin-top: 14px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #fcfaf6; }
   .person-name { font-family: var(--serif); font-size: 22px; margin: 0 0 4px; }
@@ -287,6 +290,13 @@
       cdUnits: ['d.', 'val.', 'min.', 'sek.'],
       seeYou: 'Iki pasimatymo!',
       introEditNote: 'Savo atsakymą bet kada galėsite pakeisti per šią pačią nuorodą.',
+      email: 'El. paštas',
+      emailOptional: 'El. paštas (neprivaloma)',
+      email2: 'Antras el. paštas (neprivaloma)',
+      emailHint: 'Čia atsiųsime svarbias žinutes apie šventę.',
+      remindTitle: 'Priminimai',
+      remindNote: 'Priminimai su dienos planu bus siunčiami nurodytais el. pašto adresais. Pažymėkite, kada norite juos gauti:',
+      remind: { m3: 'Likus 3 mėnesiams', m1: 'Likus mėnesiui', w1: 'Likus savaitei' },
       dear: n => 'Sveiki, ' + n + '!',
       and: 'ir',
       addAll: 'Visa diena į kalendorių:',
@@ -340,6 +350,8 @@
         ERR_PHOTO_SIZE: 'Nuotrauka per didelė.',
         ERR_PHOTO_FORMAT: 'Nepavyko nuskaityti nuotraukos. Pabandykite JPG arba PNG.',
         ERR_PHOTOS_OFF: 'Nuotraukų įkėlimas išjungtas.',
+        ERR_EMAIL: 'Patikrinkite el. pašto adresą.',
+        ERR_EMAIL_REQUIRED: 'Įrašykite savo el. paštą.',
         generic: 'Kažkas nepavyko — bandykite dar kartą.'
       }
     },
@@ -355,6 +367,13 @@
       cdUnits: ['days', 'hours', 'min', 'sec'],
       seeYou: 'See you there!',
       introEditNote: 'You can change your reply at any time using this same link.',
+      email: 'Email',
+      emailOptional: 'Email (optional)',
+      email2: 'Second email (optional)',
+      emailHint: "We'll use it for any important news about the day.",
+      remindTitle: 'Reminders',
+      remindNote: "Reminders with the day's plan will be sent to the email addresses above. Choose when you'd like them:",
+      remind: { m3: '3 months before', m1: '1 month before', w1: '1 week before' },
       dear: n => 'Dear ' + n + ',',
       and: '&',
       addAll: 'Whole day to your calendar:',
@@ -408,6 +427,8 @@
         ERR_PHOTO_SIZE: 'This photo is too large.',
         ERR_PHOTO_FORMAT: 'This photo could not be read. Please try a JPG or PNG.',
         ERR_PHOTOS_OFF: 'Photo sharing is turned off.',
+        ERR_EMAIL: 'Please check the email address.',
+        ERR_EMAIL_REQUIRED: 'Please enter your email.',
         generic: 'Something went wrong — please try again.'
       }
     }
@@ -636,7 +657,12 @@
       meals: JSON.parse(JSON.stringify(r.meals || {})),
       dietary: r.dietary || '',
       song: r.song || '',
-      message: r.message || ''
+      message: r.message || '',
+      email: r.email || '',
+      email2: r.email2 || '',
+      reminders: !S.inv.response ? { m3: true, m1: true, w1: true }
+        : (r.reminders && typeof r.reminders === 'object') ? Object.assign({ m3: false, m1: false, w1: false }, r.reminders)
+        : { m3: false, m1: !!r.reminders, w1: !!r.reminders }
     };
   }
 
@@ -713,6 +739,19 @@
       }
     }
 
+    html += `<label class="q" for="email">${esc(people.length ? t('email') : t('emailOptional'))}</label>
+      <input type="email" id="email" maxlength="120" autocomplete="email" inputmode="email" value="${esc(f.email)}">
+      <p class="field-hint">${esc(t('emailHint'))}</p>
+      <label class="q" for="email2">${esc(t('email2'))}</label>
+      <input type="email" id="email2" maxlength="120" inputmode="email" value="${esc(f.email2)}">`;
+    if (people.length) {
+      const rl = t('remind');
+      html += `<span class="q">${esc(t('remindTitle'))}</span>
+        <p class="field-hint" style="margin-top:0">${esc(t('remindNote'))}</p>
+        <div class="remind-opts">${['m3', 'm1', 'w1'].map(k =>
+          `<label class="check"><input type="checkbox" name="remind_${k}"${f.reminders[k] ? ' checked' : ''}> ${esc(rl[k])}</label>`).join('')}</div>`;
+    }
+
     html += `<label class="q" for="message">${esc(t('message'))}</label>
       <textarea id="message" maxlength="2000" placeholder="${esc(t('optional'))}">${esc(f.message)}</textarea>`;
 
@@ -736,6 +775,10 @@
       const m = f.meals[key] || {};
       if ((menu.starters.length && !m.starter) || (menu.mains.length && !m.main)) return 'ERR_MEAL';
     }
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const e1 = f.email.trim(), e2 = f.email2.trim();
+    if (comingPeople().length && !e1) return 'ERR_EMAIL_REQUIRED';
+    if ((e1 && !re.test(e1)) || (e2 && !re.test(e2))) return 'ERR_EMAIL';
     return '';
   }
 
@@ -757,7 +800,11 @@
         meals: meals,
         dietary: f.dietary,
         song: f.song,
-        message: f.message
+        message: f.message,
+        email: f.email.trim(),
+        email2: f.email2.trim(),
+        reminders: { m3: !!f.reminders.m3, m1: !!f.reminders.m1, w1: !!f.reminders.w1 },
+        lang: S.lang
       });
       const photos = S.inv.photos;
       S.inv = res.invite;
@@ -879,6 +926,8 @@
     const el = e.target, f = S.form;
     if (el.name === 'choice') { f.choice = el.value; S.formErr = ''; renderRsvp(); return; }
     if (el.name === 'plusOne') { f.plusOne = el.checked; renderRsvp(); return; }
+    const rm = /^remind_(m3|m1|w1)$/.exec(el.name || '');
+    if (rm) { f.reminders[rm[1]] = el.checked; return; }
     const m = /^([sm])_(g1|g2|plus)$/.exec(el.name || '');
     if (m) {
       f.meals[m[2]] = f.meals[m[2]] || {};
@@ -896,6 +945,8 @@
     if (el.id === 'dietary') f.dietary = el.value;
     if (el.id === 'song') f.song = el.value;
     if (el.id === 'message') f.message = el.value;
+    if (el.id === 'email') f.email = el.value;
+    if (el.id === 'email2') f.email2 = el.value;
   });
 
   $('form').addEventListener('submit', e => { e.preventDefault(); if (!S.saving) submit(); });
@@ -924,7 +975,7 @@
       const res = await fetch(API + '?action=invite&i=' + encodeURIComponent(TOKEN));
       const data = await res.json();
       if (!data.config) throw new Error('generic');
-      if (!(data.config.apiVersion >= 3)) { $('loading').textContent = t('outdated'); return; }
+      if (!(data.config.apiVersion >= 5)) { $('loading').textContent = t('outdated'); return; }
       S.cfg = data.config;
       buildBackgrounds();
       $('loading').classList.add('hidden');
