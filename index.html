@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Wedding invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3ec; --card: #fffdf9; --ink: #2b2a26; --muted: #77716a;
+    --line: #e4dccf; --accent: #3f5a45; --accent-ink: #fff; --soft: #eef2ec;
+    --warn: #9b3b2f;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 Inter, system-ui, sans-serif; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 32px 16px 64px; }
+  .hero { text-align: center; padding: 40px 8px 28px; }
+  .eyebrow { letter-spacing: .22em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+  h1 { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 48px;
+    line-height: 1.1; margin: 14px 0 10px; }
+  .date { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--accent); }
+  .rule { width: 56px; height: 1px; background: var(--accent); margin: 24px auto; opacity: .5; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 28px 24px; margin-top: 20px; }
+  h2 { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 28px; margin: 0 0 6px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  .greet { font-family: 'Cormorant Garamond', serif; font-size: 26px; margin: 0 0 8px; }
+
+  .event { padding: 18px 0; border-top: 1px solid var(--line); }
+  .event:first-of-type { border-top: 0; padding-top: 4px; }
+  .event h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .when { color: var(--accent); font-weight: 500; font-size: 14px; margin: 2px 0; }
+  .where, .notes { color: var(--muted); font-size: 14px; margin: 2px 0; }
+  .cal { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500;
+    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
+    color: var(--ink); text-decoration: none; background: #fff; }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .all-cal { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--line);
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
+
+  label.q { display: block; font-weight: 600; font-size: 14px; margin: 20px 0 8px; }
+  .choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .choice input { position: absolute; opacity: 0; pointer-events: none; }
+  .choice span { display: block; text-align: center; padding: 14px 10px; border-radius: 10px;
+    border: 1px solid var(--line); cursor: pointer; font-weight: 500; background: #fff; }
+  .choice input:checked + span { border-color: var(--accent); background: var(--soft); color: var(--accent); }
+  .choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  input[type=text], select, textarea { width: 100%; font: inherit; padding: 11px 12px;
+    border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
+  input[type=text]:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  textarea { min-height: 84px; resize: vertical; }
+  .names input + input { margin-top: 8px; }
+  .hint { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  button { margin-top: 26px; width: 100%; padding: 15px; border: 0; border-radius: 10px;
+    background: var(--accent); color: var(--accent-ink); font: 600 16px Inter, sans-serif; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: default; }
+  .banner { border-radius: 10px; padding: 12px 14px; font-size: 14px; margin-bottom: 4px; }
+  .banner.ok { background: var(--soft); color: var(--accent); }
+  .banner.err { background: #f9e7e4; color: var(--warn); }
+  .hidden { display: none !important; }
+  .center { text-align: center; color: var(--muted); }
+  .foot { text-align: center; color: var(--muted); font-size: 13px; margin-top: 28px; }
+  @media (max-width: 420px) { h1 { font-size: 38px; } .card { padding: 22px 18px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" id="heroLine">&nbsp;</div>
+    <h1 id="couple">&nbsp;</h1>
+    <div class="date" id="date"></div>
+  </header>
+
+  <div id="loading" class="card center">Opening your invitation…</div>
+
+  <div id="unknown" class="card center hidden">
+    <h2>Invitation not found</h2>
+    <p>Please open the personal link you received. If it still doesn't work, get in touch with us.</p>
+  </div>
+
+  <main id="main" class="hidden">
+    <section class="card">
+      <p class="greet" id="greet"></p>
+      <p class="sub" id="intro"></p>
+    </section>
+
+    <section class="card">
+      <h2>The day</h2>
+      <p class="sub">Add any part of the day straight to your calendar.</p>
+      <div id="events"></div>
+      <div class="all-cal">
+        Whole itinerary:
+        <a class="chip" id="allApple" href="#">Apple / Outlook (.ics)</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>RSVP</h2>
+      <p class="sub" id="deadline"></p>
+      <div id="status" class="banner ok hidden"></div>
+      <form id="form" novalidate>
+        <label class="q">Will you join us?</label>
+        <div class="choice">
+          <label><input type="radio" name="attending" value="yes"><span>Joyfully accept</span></label>
+          <label><input type="radio" name="attending" value="no"><span>Regretfully decline</span></label>
+        </div>
+
+        <div id="yesFields" class="hidden">
+          <div id="countWrap">
+            <label class="q" for="count">How many of you are coming?</label>
+            <select id="count"></select>
+          </div>
+          <label class="q">Names of everyone coming</label>
+          <div class="names" id="names"></div>
+
+          <label class="q" for="dietary">Dietary needs or allergies</label>
+          <input type="text" id="dietary" maxlength="500" placeholder="e.g. vegetarian, no nuts">
+
+          <div id="songWrap">
+            <label class="q" for="song">A song that will get you dancing</label>
+            <input type="text" id="song" maxlength="200" placeholder="Optional">
+          </div>
+        </div>
+
+        <label class="q" for="message">A note for us</label>
+        <textarea id="message" maxlength="2000" placeholder="Optional"></textarea>
+
+        <div id="error" class="banner err hidden" style="margin-top:16px"></div>
+        <button type="submit" id="submit">Send reply</button>
+        <p class="hint center">You can come back to this same link to change your reply at any time.</p>
+      </form>
+    </section>
+
+    <p class="foot" id="contact"></p>
+  </main>
+</div>
+
+
+<script>
+  // ⬇ Paste your Apps Script web app URL (ends in /exec) here
+  const API = 'https://script.google.com/macros/s/PASTE-YOUR-DEPLOYMENT-ID/exec';
+
+  const TOKEN = (new URLSearchParams(location.search).get('i') || '').replace(/[^a-zA-Z0-9]/g, '');
+  const $ = id => document.getElementById(id);
+  let invite = null;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  async function api(method, payload) {
+    const opts = method === 'POST'
+      ? { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }
+      : { method: 'GET' };
+    const url = method === 'POST' ? API : API + '?action=invite&i=' + encodeURIComponent(TOKEN);
+    const res = await fetch(url, opts);
+    if (!res.ok) throw new Error('Network error (' + res.status + ')');
+    return res.json();
+  }
+
+  function renderConfig(c) {
+    document.title = c.coupleNames + ' — Wedding';
+    $('heroLine').textContent = c.heroLine;
+    $('couple').textContent = c.coupleNames;
+    $('date').textContent = c.weddingDateText;
+    $('intro').textContent = c.intro;
+    $('deadline').textContent = 'Kindly reply by ' + c.rsvpDeadline + '.';
+    $('contact').textContent = c.contact;
+    $('allApple').href = API + '?ics=all';
+    $('allApple').target = '_blank';
+    $('songWrap').classList.toggle('hidden', !c.askSongRequest);
+    $('events').innerHTML = c.events.map((e, i) => `
+      <div class="event">
+        <h3>${esc(e.title)}</h3>
+        <p class="when">${esc(e.day)} · ${esc(e.time)}</p>
+        <p class="where">${esc(e.location)}</p>
+        ${e.notes ? `<p class="notes">${esc(e.notes)}</p>` : ''}
+        <div class="cal">
+          <a class="chip" href="${esc(e.googleUrl)}" target="_blank" rel="noopener">Google Calendar</a>
+          <a class="chip" href="${esc(API + '?ics=' + i)}" target="_blank" rel="noopener">Apple Calendar</a>
+        </div>
+      </div>`).join('');
+  }
+
+  function setNameFields(n, values) {
+    const box = $('names');
+    const current = [...box.querySelectorAll('input')].map(i => i.value);
+    const vals = values || current;
+    box.innerHTML = '';
+    for (let i = 0; i < n; i++) {
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.maxLength = 80;
+      inp.placeholder = n === 1 ? 'Full name' : 'Guest ' + (i + 1) + ' full name';
+      inp.value = vals[i] || '';
+      box.appendChild(inp);
+    }
+  }
+
+  function toggleYes() {
+    const v = (document.querySelector('input[name=attending]:checked') || {}).value;
+    $('yesFields').classList.toggle('hidden', v !== 'yes');
+  }
+
+  function renderInvite(inv) {
+    invite = inv;
+    $('greet').textContent = 'Dear ' + inv.name + ',';
+
+    const sel = $('count');
+    sel.innerHTML = '';
+    for (let i = 1; i <= inv.maxGuests; i++) {
+      sel.add(new Option(i === 1 ? '1 person' : i + ' people', i));
+    }
+    $('countWrap').classList.toggle('hidden', inv.maxGuests === 1);
+
+    const r = inv.response;
+    if (r) {
+      const radio = document.querySelector(`input[name=attending][value=${r.attending}]`);
+      if (radio) radio.checked = true;
+      sel.value = String(Math.max(1, Math.min(inv.maxGuests, r.count || 1)));
+      setNameFields(Number(sel.value), r.names);
+      $('dietary').value = r.dietary;
+      $('song').value = r.song;
+      $('message').value = r.message;
+      $('status').textContent = (r.attending === 'yes'
+        ? "You're on the list — we can't wait to see you! "
+        : "Thank you for letting us know — you'll be missed. ")
+        + (r.updated ? 'Last saved ' + r.updated + '. ' : '')
+        + 'Need to change something? Edit below and save again.';
+      $('status').classList.remove('hidden');
+      $('submit').textContent = 'Update reply';
+    } else {
+      sel.value = String(inv.maxGuests);
+      setNameFields(inv.maxGuests, []);
+      $('status').classList.add('hidden');
+      $('submit').textContent = 'Send reply';
+    }
+    toggleYes();
+  }
+
+  function showError(msg) {
+    $('error').textContent = msg;
+    $('error').classList.remove('hidden');
+  }
+
+  document.querySelectorAll('input[name=attending]').forEach(r => r.addEventListener('change', toggleYes));
+  $('count').addEventListener('change', e => setNameFields(Number(e.target.value)));
+
+  $('form').addEventListener('submit', async e => {
+    e.preventDefault();
+    $('error').classList.add('hidden');
+    const attending = (document.querySelector('input[name=attending]:checked') || {}).value;
+    if (!attending) return showError('Please let us know whether you can come.');
+    const names = [...$('names').querySelectorAll('input')].map(i => i.value.trim());
+    if (attending === 'yes' && names.some(n => !n)) return showError('Please fill in the name of everyone coming.');
+
+    const btn = $('submit');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      const res = await api('POST', {
+        token: TOKEN,
+        attending,
+        count: Number($('count').value),
+        names,
+        dietary: $('dietary').value,
+        song: $('song').value,
+        message: $('message').value
+      });
+      if (!res.ok) throw new Error(res.error || 'Could not save.');
+      renderInvite(res.invite);
+      $('status').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      showError((err && err.message) || 'Something went wrong — please try again.');
+      $('submit').textContent = invite && invite.response ? 'Update reply' : 'Send reply';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  (async () => {
+    if (!TOKEN) {
+      $('loading').classList.add('hidden');
+      $('unknown').classList.remove('hidden');
+      return;
+    }
+    try {
+      const res = await api('GET');
+      if (res.config) renderConfig(res.config);
+      $('loading').classList.add('hidden');
+      if (!res.ok) { $('unknown').classList.remove('hidden'); return; }
+      renderInvite(res.invite);
+      $('main').classList.remove('hidden');
+    } catch (err) {
+      $('loading').textContent = 'Could not load your invitation. Please refresh the page.';
+    }
+  })();
+</script>
+</body>
+</html>
