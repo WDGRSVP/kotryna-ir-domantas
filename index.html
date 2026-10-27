@@ -60,7 +60,7 @@
 
   /* ---------- Hero ---------- */
   .hero { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-    text-align: center; padding: 96px 16px max(40px, 7svh); }
+    text-align: center; padding: 96px 16px 26px; position: relative; }
   .eyebrow { letter-spacing: .28em; text-transform: uppercase; font-size: 12px; font-weight: 500; color: var(--muted); }
   .hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(46px, 11vw, 96px); line-height: 1.02;
     margin: 18px 0 14px; }
@@ -80,15 +80,14 @@
   .scroll-cue span { display: block; font-size: 20px; margin-top: 4px; animation: bob 2.4s ease-in-out infinite; }
   @keyframes bob { 50% { transform: translateY(6px); } }
   @media (min-aspect-ratio: 1/1) {
-    .hero { justify-content: flex-start; padding-top: max(80px, 9svh); }
+    .hero { justify-content: flex-start; padding-top: max(80px, 9svh); padding-bottom: 92px; }
+    .hero .scroll-cue { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); margin: 0; }
   }
   body.hero-photo .hero { color: #fff; text-shadow: 0 2px 30px rgba(0,0,0,.35); }
   body.hero-photo .hero .eyebrow, body.hero-photo .hero .date { color: #fff; }
 
   /* ---------- Panels & cards ---------- */
-  .panel { min-height: 68svh; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
-  .panel.compact { min-height: 0; padding: 18px 16px; }
-  .panel.photo-panel { align-items: flex-end; padding-bottom: 28px; }
+  .panel { display: flex; align-items: center; justify-content: center; padding: 22px 16px; }
   .photos-block { margin-top: 26px; padding-top: 22px; border-top: 1px dashed var(--line); }
   .photos-block .sub { margin-bottom: 10px; font-size: 14px; }
   .card { width: 100%; max-width: 600px; background: var(--card); border: 1px solid var(--line); border-radius: 18px;
@@ -421,11 +420,11 @@
     return typeof v === 'function' ? v.apply(null, args) : v;
   }
   function tx(v) {
-    if (v && typeof v === 'object') return v[S.lang] || v.en || v.lt || '';
-    return v == null ? '' : String(v);
+    const s = (v && typeof v === 'object') ? (v[S.lang] || v.en || v.lt || '') : (v == null ? '' : String(v));
+    return s.normalize('NFC');
   }
   function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    return String(s == null ? '' : s).normalize('NFC').replace(/[&<>"']/g, c =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
   function errText(e) {
